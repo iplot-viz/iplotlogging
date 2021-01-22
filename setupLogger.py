@@ -58,7 +58,7 @@ def get_logger(logger_name,level=None):
         if llevelX is None:
             llevel=logging.INFO
         else:
-            llevel = formatLevel(setLogLevel())
+            llevel = formatLevel(llevelX)
 
     logger.setLevel(llevel)
     logger.addHandler(get_file_handler())
