@@ -5,8 +5,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="logging2",
-    version="0.0.1",
-    author="Abadie Lana EXT",
+    version="0.1.0",
+    author="Lana Abadie",
     author_email="lana.abadie@iter.org",
     description="General logging support for IDV components",
     long_description=long_description,
