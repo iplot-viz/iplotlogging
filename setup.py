@@ -28,5 +28,5 @@ setuptools.setup(
     ],
     package_dir={"": "."},
     packages=setuptools.find_namespace_packages(where="."),
-    python_requires="=3.8"
+    python_requires=">=3.8"
 )
