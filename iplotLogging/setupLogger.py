@@ -7,6 +7,11 @@ import sys
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
+FILE_FORMATTER = logging.Formatter("[%(asctime)s.%(msecs)03d][%(hostname)s:%(username)s][%(processName)s:%(process)d][%(name)s-%(funcName)s][%(levelname)s]%(message)s",
+        datefmt='%Y-%m-%dT%H:%M:%S')
+CONSOLE_FORMATTER = logging.Formatter("%(asctime)s - %(levelname)s - %(name)s.%(funcName)s:(%(filename)s:%(lineno)d) - %(message)s",
+        datefmt='%d-%b-%y %H:%M:%S')
+
 
 class HostnameFilter(logging.Filter):
     hostname = platform.node()
@@ -36,9 +41,6 @@ def get_file_handler():
         dfile = "protoplotQt5.log"
     else:
         dfile = userFile
-    FORMATTER = logging.Formatter(
-        "[%(asctime)s.%(msecs)03d][%(hostname)s:%(username)s][%(processName)s:%(process)d][%(name)s-%(funcName)s][%(levelname)s]%(message)s",
-        datefmt='%Y-%m-%dT%H:%M:%S')
 
     cusFolder = dpath + "/logs"
     # logging.config.fileConfig('logging.conf')
@@ -54,9 +56,13 @@ def get_file_handler():
     file_handler = TimedRotatingFileHandler(filename, when='D', interval=1, backupCount=10, encoding='utf-8')
     file_handler.addFilter(HostnameFilter())
     file_handler.addFilter(UserFilter())
-    file_handler.setFormatter(FORMATTER)
+    file_handler.setFormatter(FILE_FORMATTER)
     return file_handler
 
+def get_console_handler():
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(CONSOLE_FORMATTER)
+    return console_handler
 
 def formatLevel(lvl):
     if lvl == "INFO":
@@ -86,5 +92,5 @@ def get_logger(logger_name, level=None):
 
     logger.setLevel(llevel)
     logger.addHandler(get_file_handler())
-    logger.addHandler(logging.StreamHandler(sys.stdout))
+    logger.addHandler(get_console_handler())
     return logger
