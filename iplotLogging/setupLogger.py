@@ -41,9 +41,9 @@ def get_file_handler():
     file_handler.setFormatter(FORMATTER)
 
 class fileHandlerIplot(object):
-    def __init__(self):
-        self.fhandler=get_file_handler()
-        self.instanciated=True
+    
+    self.fhandler=get_file_handler()
+    self.instanciated=True
 
 
 class HostnameFilter(logging.Filter):
