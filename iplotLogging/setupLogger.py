@@ -70,11 +70,12 @@ def get_file_handler():
     file_handler.addFilter(HostnameFilter())
     file_handler.addFilter(UserFilter())
     file_handler.setFormatter(FORMATTER)
+    return file_handler
 
 class fileHandlerIplot(object):
 
-    self.fhandler=get_file_handler()
-    self.instanciated=True
+    fhandler=get_file_handler()
+    instanciated=True
 
 
 
