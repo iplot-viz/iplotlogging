@@ -7,6 +7,37 @@ import sys
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
+class HostnameFilter(logging.Filter):
+    hostname = platform.node()
+
+    def filter(self, record):
+        record.hostname = HostnameFilter.hostname
+        return True
+
+
+class UserFilter(logging.Filter):
+    username = getpass.getuser()
+
+    def filter(self, record):
+        record.username = UserFilter.username
+        return True
+
+
+
+
+def formatLevel(lvl):
+    if lvl == "INFO":
+        return logging.INFO
+    if lvl == "DEBUG":
+        return logging.DEBUG
+    if lvl == "WARNING":
+        return logging.WARNING
+    if lvl == "CRITICAL":
+        return logging.CRITICAL
+    if lvl == "ERROR":
+        return logging.ERROR
+
+    return logging.INFO
 
 def get_file_handler():
     userLoc = os.environ.get('PROTO_LOG_PATH')
@@ -41,42 +72,12 @@ def get_file_handler():
     file_handler.setFormatter(FORMATTER)
 
 class fileHandlerIplot(object):
-    
+
     self.fhandler=get_file_handler()
     self.instanciated=True
 
 
-class HostnameFilter(logging.Filter):
-    hostname = platform.node()
 
-    def filter(self, record):
-        record.hostname = HostnameFilter.hostname
-        return True
-
-
-class UserFilter(logging.Filter):
-    username = getpass.getuser()
-
-    def filter(self, record):
-        record.username = UserFilter.username
-        return True
-
-
-
-
-def formatLevel(lvl):
-    if lvl == "INFO":
-        return logging.INFO
-    if lvl == "DEBUG":
-        return logging.DEBUG
-    if lvl == "WARNING":
-        return logging.WARNING
-    if lvl == "CRITICAL":
-        return logging.CRITICAL
-    if lvl == "ERROR":
-        return logging.ERROR
-
-    return logging.INFO
 
 
 def get_logger(logger_name, level=None):
