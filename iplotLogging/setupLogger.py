@@ -7,7 +7,43 @@ import sys
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
-file_handler = None
+
+def get_file_handler():
+    userLoc = os.environ.get('PROTO_LOG_PATH')
+    if userLoc is None:
+        home = str(Path.home())
+        dpath = home + "/.local/1Dtool/"
+    else:
+        dpath = userLoc
+    userFile = os.environ.get('PROTO_LOG_FILENAME')
+    if userFile is None:
+        dfile = f"protoplotQt5_{platform.node()}_{os.getpid()}.log"
+    else:
+        dfile = userFile
+    FORMATTER = logging.Formatter(
+        "[%(asctime)s.%(msecs)03d][%(hostname)s:%(username)s][%(processName)s:%(process)d][%(name)s-%(funcName)s][%(levelname)s]%(message)s",
+        datefmt='%Y-%m-%dT%H:%M:%S')
+
+    cusFolder = dpath + "/logs"
+    # logging.config.fileConfig('logging.conf')
+    # logging.basicConfig( format='%(asctime)s-%(levelname)s-%(process)d-%(funcName)s-%(message)s', datefmt='%Y-%m-%dT%H:%M:%S')
+    # filename="~/.local/1Dtool/logs/protoplotQt5.log",
+    logger = logging.getLogger('root')
+    try:
+        os.makedirs(cusFolder)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+    filename = cusFolder + "/" + dfile
+    file_handler = TimedRotatingFileHandler(filename, when='D', interval=1, backupCount=10, encoding='utf-8')
+    file_handler.addFilter(HostnameFilter())
+    file_handler.addFilter(UserFilter())
+    file_handler.setFormatter(FORMATTER)
+
+class fileHandlerIplot(object):
+    def __init__(self):
+        self.fhandler=get_file_handler()
+        self.instanciated=True
 
 
 class HostnameFilter(logging.Filter):
@@ -26,41 +62,6 @@ class UserFilter(logging.Filter):
         return True
 
 
-def get_file_handler():
-    if file_handler is None:
-        userLoc = os.environ.get('PROTO_LOG_PATH')
-        if userLoc is None:
-            home = str(Path.home())
-            dpath = home + "/.local/1Dtool/"
-        else:
-            dpath = userLoc
-        userFile = os.environ.get('PROTO_LOG_FILENAME')
-        if userFile is None:
-            dfile = "mint.log"
-        else:
-            dfile = userFile
-        FORMATTER = logging.Formatter(
-            "[%(asctime)s.%(msecs)03d][%(hostname)s:%(username)s][%(processName)s:%(process)d][%(name)s-%(funcName)s][%(levelname)s]%(message)s",
-            datefmt='%Y-%m-%dT%H:%M:%S')
-
-        cusFolder = dpath + "/logs"
-        # logging.config.fileConfig('logging.conf')
-        # logging.basicConfig( format='%(asctime)s-%(levelname)s-%(process)d-%(funcName)s-%(message)s', datefmt='%Y-%m-%dT%H:%M:%S')
-        # filename="~/.local/1Dtool/logs/protoplotQt5.log",
-        logger = logging.getLogger('root')
-        try:
-            os.makedirs(cusFolder)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-        filename = cusFolder + "/" + dfile
-
-        file_handler = TimedRotatingFileHandler(filename, when='D', interval=1, backupCount=10, encoding='utf-8')
-        file_handler.addFilter(HostnameFilter())
-        file_handler.addFilter(UserFilter())
-        file_handler.setFormatter(FORMATTER)
-        return file_handler
-    return file_handler
 
 
 def formatLevel(lvl):
@@ -90,6 +91,6 @@ def get_logger(logger_name, level=None):
             llevel = formatLevel(llevelX)
 
     logger.setLevel(llevel)
-    logger.addHandler(get_file_handler())
+    logger.addHandler(fileHandlerIplot.fhandler)
     logger.addHandler(logging.StreamHandler(sys.stdout))
     return logger
