@@ -74,8 +74,8 @@ def get_file_handler():
 
 class fileHandlerIplot(object):
 
-    fhandler=get_file_handler()
-    instanciated=True
+    fhandler = get_file_handler()
+
 
 
 
