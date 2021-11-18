@@ -48,7 +48,7 @@ def get_file_handler():
         dpath = userLoc
     userFile = os.environ.get('PROTO_LOG_FILENAME')
     if userFile is None:
-        dfile = f"protoplotQt5_{platform.node()}_{os.getpid()}.log"
+        dfile = f"mint_{platform.node()}_{os.getpid()}.log"
     else:
         dfile = userFile
     FORMATTER = logging.Formatter(
