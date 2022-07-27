@@ -7,7 +7,6 @@ import sys
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
-
 class HostnameFilter(logging.Filter):
     hostname = platform.node()
 
@@ -24,6 +23,22 @@ class UserFilter(logging.Filter):
         return True
 
 
+
+
+def formatLevel(lvl):
+    if lvl == "INFO":
+        return logging.INFO
+    if lvl == "DEBUG":
+        return logging.DEBUG
+    if lvl == "WARNING":
+        return logging.WARNING
+    if lvl == "CRITICAL":
+        return logging.CRITICAL
+    if lvl == "ERROR":
+        return logging.ERROR
+
+    return logging.INFO
+
 def get_file_handler():
     userLoc = os.environ.get('PROTO_LOG_PATH')
     if userLoc is None:
@@ -33,11 +48,12 @@ def get_file_handler():
         dpath = userLoc
     userFile = os.environ.get('PROTO_LOG_FILENAME')
     if userFile is None:
-        dfile = "protoplotQt5.log"
+        dfile = f"mint_{platform.node()}_{os.getpid()}.log"
     else:
         dfile = userFile
-    FORMATTER = logging.Formatter("[%(asctime)s.%(msecs)03d][%(hostname)s:%(username)s][%(processName)s:%(process)d][%(name)s-%(funcName)s][%(levelname)s]%(message)s",
-    datefmt='%Y-%m-%dT%H:%M:%S')
+    FORMATTER = logging.Formatter(
+        "[%(asctime)s.%(msecs)03d][%(hostname)s:%(username)s][%(processName)s:%(process)d][%(name)s-%(funcName)s][%(levelname)s]%(message)s",
+        datefmt='%Y-%m-%dT%H:%M:%S')
 
     cusFolder = dpath + "/logs"
     # logging.config.fileConfig('logging.conf')
@@ -56,20 +72,13 @@ def get_file_handler():
     file_handler.setFormatter(FORMATTER)
     return file_handler
 
+class fileHandlerIplot(object):
 
-def formatLevel(lvl):
-    if lvl == "INFO":
-        return logging.INFO
-    if lvl == "DEBUG":
-        return logging.DEBUG
-    if lvl == "WARNING":
-        return logging.WARNING
-    if lvl == "CRITICAL":
-        return logging.CRITICAL
-    if lvl == "ERROR":
-        return logging.ERROR
+    fhandler = get_file_handler()
 
-    return logging.INFO
+
+
+
 
 
 def get_logger(logger_name, level=None):
@@ -84,6 +93,6 @@ def get_logger(logger_name, level=None):
             llevel = formatLevel(llevelX)
 
     logger.setLevel(llevel)
-    logger.addHandler(get_file_handler())
+    logger.addHandler(fileHandlerIplot.fhandler)
     logger.addHandler(logging.StreamHandler(sys.stdout))
     return logger
