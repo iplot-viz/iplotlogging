@@ -1,4 +1,5 @@
 import setuptools
+import versioneer
 
 # from iplotLogging._version import __version__
 
