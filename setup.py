@@ -1,19 +1,21 @@
 import setuptools
-from iplotLogging._version import __version__
+import versioneer
+
+# from iplotLogging._version import __version__
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="iplotLogging",
-    setup_requires=[
-        "setuptools-git-versioning"
-    ],
-    version_config={
-        "version_callback": __version__,
-        "template": "{tag}",
-        "dirty_template": "{tag}.dev{ccount}.{sha}",
-    },
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
+    setup_requires=["setuptools-git-versioning"],
+    # version_config={
+    #     "version_callback": __version__,
+    #     "template": "{tag}",
+    #     "dirty_template": "{tag}.dev{ccount}.{sha}",
+    # },
     author="Lana Abadie",
     author_email="lana.abadie@iter.org",
     description="General logging support for IDV components",
@@ -29,5 +31,5 @@ setuptools.setup(
     ],
     package_dir={"": "."},
     packages=setuptools.find_namespace_packages(where="."),
-    python_requires=">=3.8"
+    python_requires=">=3.8",
 )
