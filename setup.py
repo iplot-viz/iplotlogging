@@ -29,6 +29,10 @@ setuptools.setup(
         # "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    keywords="ITER logging",
+    setup_requires=["setuptools"],
     python_requires=">=3.6",
     packages=["iplotLogging"],
+    tests_require=["pytest"],
+    test_suite="tests",
 )
