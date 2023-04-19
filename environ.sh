@@ -16,7 +16,6 @@ function try ()
   "$@" || die "cannot $*" 
 }
 
-
 # Default to foss toolchain
 if [[ "$1" == "foss" || -z $1 ]];
 then
@@ -39,3 +38,5 @@ echo "Configuration: $config"
 
 # Testing/Coverage requirements
 try module load coverage/5.5-GCCcore-10.2.0 
+
+export HOME=$PWD
