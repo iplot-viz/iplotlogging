@@ -40,3 +40,4 @@ echo "Configuration: $config"
 try module load coverage/5.5-GCCcore-10.2.0 
 
 export HOME=$PWD
+echo "HOME was set to $HOME"
