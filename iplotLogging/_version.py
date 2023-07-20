@@ -1,4 +1,3 @@
-
 # This file helps to compute a version number in source trees obtained from
 # git-archive tarball (such as those provided by githubs download-from-tag
 # feature). Distribution tarballs (built by setup.py sdist) and build
@@ -34,7 +33,7 @@ def get_keywords():
     if not mo_tag_in_git_refnames:
         mo_tag_in_git_describe = re.search(r'(\d+\.)(\d+\.)(\d+)', git_describe_output)
         if mo_tag_in_git_describe:
-            mo_describe = '(, tag: '+ git_describe_output +',,'+ git_refnames + ')'
+            mo_describe = '(, tag: ' + git_describe_output + ',,' + git_refnames + ')'
             git_refnames = mo_describe
     keywords = {"refnames": git_refnames, "full": git_full, "date": git_date}
     return keywords
@@ -68,12 +67,14 @@ HANDLERS: Dict[str, Dict[str, Callable]] = {}
 
 def register_vcs_handler(vcs, method):  # decorator
     """Create decorator to mark a method as the handler of a VCS."""
+
     def decorate(f):
         """Store f in HANDLERS[vcs][method]."""
         if vcs not in HANDLERS:
             HANDLERS[vcs] = {}
         HANDLERS[vcs][method] = f
         return f
+
     return decorate
 
 
@@ -81,7 +82,6 @@ def run_command(commands, args, cwd=None, verbose=False, hide_stderr=False,
                 env=None):
     """Call the given command(s)."""
     assert isinstance(commands, list)
-    process = None
 
     popen_kwargs = {}
     if sys.platform == "win32":
@@ -184,7 +184,7 @@ def git_versions_from_keywords(keywords, tag_prefix, verbose):
         date = date.splitlines()[-1]
 
         # git-2.2.0 added "%cI", which expands to an ISO-8601 -compliant
-        # datestamp. However we prefer "%ci" (which expands to an "ISO-8601
+        # datestamp. However, we prefer "%ci" (which expands to an "ISO-8601
         # -like" string, which we must then edit to make compliant), because
         # it's been around since git-1.5.3, and it's too difficult to
         # discover which version we're using, or to work around using an
@@ -198,8 +198,8 @@ def git_versions_from_keywords(keywords, tag_prefix, verbose):
     refs = {r.strip() for r in refnames.strip("()").split(",")}
     # starting in git-1.8.3, tags are listed as "tag: foo-1.0" instead of
     # just "foo-1.0". If we see a "tag: " prefix, prefer those.
-    TAG = "tag: "
-    tags = {r[len(TAG):] for r in refs if r.startswith(TAG)}
+    tag = "tag: "
+    tags = {r[len(tag):] for r in refs if r.startswith(tag)}
     if not tags:
         # Either we're using git < 1.8.3, or there really are no tags. We use
         # a heuristic: assume all version tags have a digit. The old git %d
@@ -244,9 +244,9 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, runner=run_command):
     expanded, and _version.py hasn't already been rewritten with a short
     version string, meaning we're inside a checked out source tree.
     """
-    GITS = ["git"]
+    gits = ["git"]
     if sys.platform == "win32":
-        GITS = ["git.cmd", "git.exe"]
+        gits = ["git.cmd", "git.exe"]
 
     # GIT_DIR can interfere with correct operation of Versioneer.
     # It may be intended to be passed to the Versioneer-versioned project,
@@ -255,7 +255,7 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, runner=run_command):
     env.pop("GIT_DIR", None)
     runner = functools.partial(runner, env=env)
 
-    _, rc = runner(GITS, ["rev-parse", "--git-dir"], cwd=root,
+    _, rc = runner(gits, ["rev-parse", "--git-dir"], cwd=root,
                    hide_stderr=not verbose)
     if rc != 0:
         if verbose:
@@ -264,7 +264,7 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, runner=run_command):
 
     # if there is a tag matching tag_prefix, this yields TAG-NUM-gHEX[-dirty]
     # if there isn't one, this yields HEX[-dirty] (no NUM)
-    describe_out, rc = runner(GITS, [
+    describe_out, rc = runner(gits, [
         "describe", "--tags", "--dirty", "--always", "--long",
         "--match", f"{tag_prefix}[[:digit:]]*"
     ], cwd=root)
@@ -272,17 +272,14 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, runner=run_command):
     if describe_out is None:
         raise NotThisMethod("'git describe' failed")
     describe_out = describe_out.strip()
-    full_out, rc = runner(GITS, ["rev-parse", "HEAD"], cwd=root)
+    full_out, rc = runner(gits, ["rev-parse", "HEAD"], cwd=root)
     if full_out is None:
         raise NotThisMethod("'git rev-parse' failed")
     full_out = full_out.strip()
 
-    pieces = {}
-    pieces["long"] = full_out
-    pieces["short"] = full_out[:7]  # maybe improved later
-    pieces["error"] = None
+    pieces = {"long": full_out, "short": full_out[:7], "error": None}
 
-    branch_name, rc = runner(GITS, ["rev-parse", "--abbrev-ref", "HEAD"],
+    branch_name, rc = runner(gits, ["rev-parse", "--abbrev-ref", "HEAD"],
                              cwd=root)
     # --abbrev-ref was added in git-1.6.3
     if rc != 0 or branch_name is None:
@@ -293,7 +290,7 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, runner=run_command):
         # If we aren't exactly on a branch, pick a branch which represents
         # the current commit. If all else fails, we are on a branchless
         # commit.
-        branches, rc = runner(GITS, ["branch", "--contains"], cwd=root)
+        branches, rc = runner(gits, ["branch", "--contains"], cwd=root)
         # --contains was added in git-1.5.4
         if rc != 0 or branches is None:
             raise NotThisMethod("'git branch --contains' returned error")
@@ -356,11 +353,11 @@ def git_pieces_from_vcs(tag_prefix, root, verbose, runner=run_command):
     else:
         # HEX: no tags
         pieces["closest-tag"] = None
-        out, rc = runner(GITS, ["rev-list", "HEAD", "--left-right"], cwd=root)
+        out, rc = runner(gits, ["rev-list", "HEAD", "--left-right"], cwd=root)
         pieces["distance"] = len(out.split())  # total number of commits
 
     # commit date: see ISO-8601 comment in git_versions_from_keywords()
-    date = runner(GITS, ["show", "-s", "--format=%ci", "HEAD"], cwd=root)[0].strip()
+    date = runner(gits, ["show", "-s", "--format=%ci", "HEAD"], cwd=root)[0].strip()
     # Use only the last line.  Previous lines may contain GPG signature
     # information.
     date = date.splitlines()[-1]
