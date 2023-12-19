@@ -1,6 +1,0 @@
-include README.md
-include LICENSE.md
-graft iplotLogging
-recursive-exclude * *.py[co]
-include versioneer.py
-include iplotLogging/_version.py
