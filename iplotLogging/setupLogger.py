@@ -42,7 +42,6 @@ def format_level(lvl):
 
 def get_file_handler():
     dpath = os.environ.get('PROTO_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
-
     dfile = os.environ.get('PROTO_LOG_FILENAME') or f"mint_{platform.node()}_{os.getpid()}.log"
 
     formatter = logging.Formatter("[%(asctime)s.%(msecs)03d][%(hostname)s:%(username)s][%(processName)s:%(process)d]"
@@ -86,6 +85,7 @@ def get_logger(logger_name, level=None):
 
 def delete_older_logs(logger):
     path = os.environ.get('PROTO_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
+    path += "/logs"
     days = os.environ.get('LIMIT_DAYS_LOGS_MINT') or 10
     actual_date = datetime.datetime.now()
     files = os.listdir(path)
