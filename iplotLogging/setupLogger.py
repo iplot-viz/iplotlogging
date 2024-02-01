@@ -41,8 +41,8 @@ def format_level(lvl):
 
 
 def get_file_handler():
-    dpath = os.environ.get('PROTO_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
-    dfile = os.environ.get('PROTO_LOG_FILENAME') or f"mint_{platform.node()}_{os.getpid()}.log"
+    dpath = os.environ.get('IPLOT_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
+    dfile = os.environ.get('IPLOT_LOG_FILENAME') or f"mint_{platform.node()}_{os.getpid()}.log"
 
     formatter = logging.Formatter("[%(asctime)s.%(msecs)03d][%(hostname)s:%(username)s][%(processName)s:%(process)d]"
                                   "[%(name)s-%(funcName)s][%(levelname)s]%(message)s", datefmt='%Y-%m-%dT%H:%M:%S')
@@ -71,7 +71,7 @@ def get_logger(logger_name, level=None):
     if level:
         level2 = format_level(level)
     else:
-        level2_x = os.environ.get('PROTO_LOG_LEVEL')
+        level2_x = os.environ.get('IPLOT_LOG_LEVEL')
         if level2_x is None:
             level2 = logging.INFO
         else:
@@ -84,9 +84,9 @@ def get_logger(logger_name, level=None):
 
 
 def delete_older_logs(logger):
-    path = os.environ.get('PROTO_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
+    path = os.environ.get('IPLOT_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
     path += "/logs"
-    days = os.environ.get('LIMIT_DAYS_LOGS_MINT') or 10
+    days = os.environ.get('IPLOT_LOG_LIMIT') or 10
     actual_date = datetime.datetime.now()
     files = os.listdir(path)
 
