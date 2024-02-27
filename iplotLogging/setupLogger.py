@@ -8,11 +8,13 @@ import datetime
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
+IPLOT_LOG_LIMIT = os.environ.get('IPLOT_LOG_LIMIT')
+
 
 class HostnameFilter(logging.Filter):
     hostname = platform.node()
 
-    def filter(self, record):
+    def filter(self, record) -> bool:
         record.hostname = HostnameFilter.hostname
         return True
 
@@ -20,12 +22,12 @@ class HostnameFilter(logging.Filter):
 class UserFilter(logging.Filter):
     username = getpass.getuser()
 
-    def filter(self, record):
+    def filter(self, record) -> bool:
         record.username = UserFilter.username
         return True
 
 
-def format_level(lvl):
+def format_level(lvl) -> int:
     if lvl == "INFO":
         return logging.INFO
     if lvl == "DEBUG":
@@ -40,7 +42,7 @@ def format_level(lvl):
     return logging.INFO
 
 
-def get_file_handler():
+def get_file_handler() -> TimedRotatingFileHandler:
     dpath = os.environ.get('IPLOT_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
     dfile = os.environ.get('IPLOT_LOG_FILENAME') or f"mint_{platform.node()}_{os.getpid()}.log"
 
@@ -66,7 +68,7 @@ def get_file_handler():
     return file_handler
 
 
-def get_logger(logger_name, level=None):
+def get_logger(logger_name, level=None) -> logging.Logger:
     logger = logging.getLogger(logger_name)
     if level:
         level2 = format_level(level)
@@ -86,7 +88,6 @@ def get_logger(logger_name, level=None):
 def delete_older_logs(logger):
     path = os.environ.get('IPLOT_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
     path += "/logs"
-    IPLOT_LOG_LIMIT = os.environ.get('IPLOT_LOG_LIMIT')
     days = int(IPLOT_LOG_LIMIT) if IPLOT_LOG_LIMIT else 10
     actual_date = datetime.datetime.now()
     files = os.listdir(path)
@@ -112,7 +113,6 @@ def delete_older_logs(logger):
 def delete_older_dumps(logger):
     path = os.environ.get('IPLOT_DUMP_PATH') or f"{Path.home()}/.local/1Dtool"
     path += "/dumps"
-    IPLOT_LOG_LIMIT = os.environ.get('IPLOT_LOG_LIMIT')
     days = int(IPLOT_LOG_LIMIT) if IPLOT_LOG_LIMIT else 10
     actual_date = datetime.datetime.now()
     files = os.listdir(path)
