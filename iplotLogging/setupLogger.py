@@ -90,7 +90,10 @@ def delete_older_logs(logger):
     path += "/logs"
     days = int(IPLOT_LOG_LIMIT) if IPLOT_LOG_LIMIT else 10
     actual_date = datetime.datetime.now()
-    files = os.listdir(path)
+    if os.path.exists(path):
+        files = os.listdir(path)
+    else:
+        files=[]
 
     for file in files:
         full_path = os.path.join(path, file)
@@ -115,7 +118,10 @@ def delete_older_dumps(logger):
     path += "/dumps"
     days = int(IPLOT_LOG_LIMIT) if IPLOT_LOG_LIMIT else 10
     actual_date = datetime.datetime.now()
-    files = os.listdir(path)
+    if os.path.exists(path):
+        files = os.listdir(path)
+    else:
+        files=[]
 
     for file in files:
         full_path = os.path.join(path, file)
