@@ -37,7 +37,9 @@ fi
 echo "Configuration: $config"
 
 # Testing/Coverage requirements
-try module load coverage/5.5-GCCcore-10.2.0 
+try module load coverage Python-bundle-PyPI
+
+try module -t list 2>&1 | sort
 
 export HOME=$PWD
 echo "HOME was set to $HOME"
