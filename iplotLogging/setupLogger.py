@@ -81,9 +81,7 @@ def get_logger(logger_name, level=None) -> logging.Logger:
 
     logger.setLevel(level2)
     logger.addHandler(FileHandlerIplot.fhandler)
-    # Now the log messages will be displayed only in the custom console widget. This approach centralizes the logs in
-    # the console widget, eliminating any duplicated output.
-    # logger.addHandler(logging.StreamHandler(sys.stdout))
+    logger.addHandler(logging.StreamHandler(sys.stdout))
     return logger
 
 
