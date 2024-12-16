@@ -89,56 +89,41 @@ def delete_older_logs(logger):
     path = os.environ.get('IPLOT_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
     path += "/logs"
     days = int(IPLOT_LOG_LIMIT) if IPLOT_LOG_LIMIT else 10
-    actual_date = datetime.datetime.now()
-    if os.path.exists(path):
-        files = os.listdir(path)
-    else:
-        files = []
 
-    for file in files:
-        full_path = os.path.join(path, file)
-
-        if os.path.isfile(full_path):
-            file_date = datetime.datetime.fromtimestamp(os.path.getmtime(full_path))
-
-            days_diff = (actual_date - file_date).days
-
-            if days_diff > days:
-                try:
-                    os.remove(full_path)
-                    logger.info(f"Deleted file: {file}")
-                except PermissionError:
-                    logger.warning(f"Permission error deleting file: {file}")
-                except Exception as e:
-                    logger.warning(f"Failed while deleting file: {file} -> {e}")
+    delete_older_files(logger, path, days)
 
 
 def delete_older_dumps(logger):
     path = os.environ.get('IPLOT_DUMP_PATH') or f"{Path.home()}/.local/1Dtool"
     path += "/dumps"
     days = int(IPLOT_LOG_LIMIT) if IPLOT_LOG_LIMIT else 10
+    delete_older_files(logger, path, days)
+
+
+def delete_older_files(logger, path, days):
     actual_date = datetime.datetime.now()
     if os.path.exists(path):
-        files = os.listdir(path)
+        files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
     else:
         files = []
 
-    for file in files:
+    files.sort(key=lambda x: os.path.getmtime(os.path.join(path, x)))
+
+    for file in files[:-5]:
         full_path = os.path.join(path, file)
 
-        if os.path.isfile(full_path):
-            file_date = datetime.datetime.fromtimestamp(os.path.getmtime(full_path))
+        file_date = datetime.datetime.fromtimestamp(os.path.getmtime(full_path))
 
-            days_diff = (actual_date - file_date).days
+        days_diff = (actual_date - file_date).days
 
-            if days_diff > days:
-                try:
-                    os.remove(full_path)
-                    logger.info(f"Deleted file: {file}")
-                except PermissionError:
-                    logger.warning(f"Permission error deleting file: {file}")
-                except Exception as e:
-                    logger.warning(f"Failed while deleting file: {file} -> {e}")
+        if days_diff > days:
+            try:
+                os.remove(full_path)
+                logger.info(f"Deleted file: {file}")
+            except PermissionError:
+                logger.warning(f"Permission error deleting file: {file}")
+            except Exception as e:
+                logger.warning(f"Failed while deleting file: {file} -> {e}")
 
 
 class FileHandlerIplot(object):
