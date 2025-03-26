@@ -1,8 +1,16 @@
 # Logging helper
 General logging support for IDV components
 
-# Install
-`pip install .`
+# Installation
+```bash
+pip install .
+```
 
-# Requires
+## Installation with optional dependencies
+Optional dependencies for test
+```bash
+pip install .[test]
+```
+
+# Requirements
 1. python >= 3.6

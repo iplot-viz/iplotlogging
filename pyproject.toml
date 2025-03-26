@@ -2,6 +2,31 @@
 requires = ["setuptools>=42.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "iplotLogging"
+description = "General logging support for IDV components"
+authors = [{ name = "Lana Abadie", email = "lana.abadie@iter.org" }]
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">= 3.6"
+license = { text = "MIT" }
+keywords = ["ITER logging", "logs"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    # "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://git.iter.org/scm/vis/logging.git"
+
+[project.optional-dependencies]
+test = "pytest"
+
+[tool.setuptools]
+packages = ["iplotLogging"]
+package-dir = { "" = "." }
+
 [tool.versioneer]
 VCS = "git"
 style = "pep440"
