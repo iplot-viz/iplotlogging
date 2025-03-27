@@ -13,4 +13,4 @@ pip install .[test]
 ```
 
 # Requirements
-1. python >= 3.6
+1. python >= 3.11

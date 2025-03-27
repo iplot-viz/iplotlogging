@@ -5,9 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "iplotLogging"
 description = "General logging support for IDV components"
-authors = [{ name = "Lana Abadie", email = "lana.abadie@iter.org" }]
+authors = [
+    { name = "Lana Abadie", email = "lana.abadie@iter.org" },
+    { name = "Pablo Martin Villares", email = "pmartin@minsait.com" },
+    { name = "Jhon Steeven Cabanilla Alvarado", email = "jscabanilla@minsait.com" },
+]
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">= 3.6"
+requires-python = ">= 3.11"
 license = { text = "MIT" }
 keywords = ["ITER logging", "logs"]
 classifiers = [
