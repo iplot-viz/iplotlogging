@@ -8,6 +8,24 @@ import datetime
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
+def get_mint_data_dir() -> Path:
+    """
+    Return Mint's base directory for config/data.
+    - Windows: %LOCALAPPDATA%/mint
+    - Linux/macOS: $XDG_DATA_HOME/mint or ~/.local/share/mint
+    """
+    if platform.system() == "Windows":
+        local_app = Path(os.getenv("LOCALAPPDATA",
+                                   Path.home() / "AppData" / "Local"))
+        return local_app / "mint"
+    xdg = os.getenv("XDG_DATA_HOME")
+    return Path(xdg) / "mint" if xdg else Path.home() / ".local" / "share" / "mint"
+
+# Ensure that both log and dump paths default to the new Mint directory
+mint_tool_dir = get_mint_data_dir() / "1Dtool"
+os.environ.setdefault("IPLOT_LOG_PATH", str(mint_tool_dir))
+os.environ.setdefault("IPLOT_DUMP_PATH", str(mint_tool_dir))
+
 IPLOT_LOG_LIMIT = os.environ.get('IPLOT_LOG_LIMIT')
 
 
