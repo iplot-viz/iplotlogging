@@ -61,13 +61,13 @@ def format_level(lvl) -> int:
 
 
 def get_file_handler() -> TimedRotatingFileHandler:
-    dpath = os.environ.get('IPLOT_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
+    dpath = Path(os.environ["IPLOT_LOG_PATH"])
     dfile = os.environ.get('IPLOT_LOG_FILENAME') or f"mint_{platform.node()}_{os.getpid()}.log"
 
     formatter = logging.Formatter("[%(asctime)s.%(msecs)03d][%(hostname)s:%(username)s][%(processName)s:%(process)d]"
                                   "[%(name)s-%(funcName)s][%(levelname)s]%(message)s", datefmt='%Y-%m-%dT%H:%M:%S')
 
-    cus_folder = dpath + "/logs"
+    cus_folder = dpath / "logs"
     # logging.config.fileConfig('logging.conf')
     # logging.basicConfig( format='%(asctime)s-%(levelname)s-%(process)d-%(funcName)s-%(message)s',
     #                      datefmt='%Y-%m-%dT%H:%M:%S')
@@ -104,16 +104,14 @@ def get_logger(logger_name, level=None) -> logging.Logger:
 
 
 def delete_older_logs(logger):
-    path = os.environ.get('IPLOT_LOG_PATH') or f"{Path.home()}/.local/1Dtool"
-    path += "/logs"
+    path = Path(os.environ["IPLOT_LOG_PATH"]) / "logs"
     days = int(IPLOT_LOG_LIMIT) if IPLOT_LOG_LIMIT else 10
 
     delete_older_files(logger, path, days)
 
 
 def delete_older_dumps(logger):
-    path = os.environ.get('IPLOT_DUMP_PATH') or f"{Path.home()}/.local/1Dtool"
-    path += "/dumps"
+    path = Path(os.environ["IPLOT_DUMP_PATH"]) / "dumps"
     days = int(IPLOT_LOG_LIMIT) if IPLOT_LOG_LIMIT else 10
     delete_older_files(logger, path, days)
 
