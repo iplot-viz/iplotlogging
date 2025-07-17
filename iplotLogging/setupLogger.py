@@ -78,7 +78,7 @@ def get_file_handler() -> TimedRotatingFileHandler:
     except OSError as e:
         if e.errno != errno.EEXIST:
             raise
-    filename = cus_folder + "/" + dfile
+    filename = cus_folder / dfile
     file_handler = TimedRotatingFileHandler(filename, when='D', interval=1, backupCount=10, encoding='utf-8')
     file_handler.addFilter(HostnameFilter())
     file_handler.addFilter(UserFilter())
