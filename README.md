@@ -5,4 +5,4 @@ General logging support for IDV components
 `pip install .`
 
 # Requires
-1. python >= 3.6
+1. python >= 3.8

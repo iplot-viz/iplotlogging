@@ -27,7 +27,7 @@ setuptools.setup(
     ],
     keywords="ITER logging",
     setup_requires=["setuptools"],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     packages=["iplotLogging"],
     tests_require=["pytest"],
     test_suite="tests",
