@@ -16,7 +16,7 @@ setuptools.setup(
     author_email="lana.abadie@iter.org",
     description="General logging support for IDV components",
     long_description=long_description,
-    url="https://git.iter.org/scm/vis/logging.git",
+    url="https://github.com/iplot-viz/iplotlogging.git",
     project_urls={
         "Bug Tracker": "https://jira.iter.org/issues/?jql=project+%3D+IDV+AND+component+%3D+Logging",
     },
