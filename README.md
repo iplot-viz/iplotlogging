@@ -5,7 +5,7 @@ General logging support for IDV components.
 ## Requirements
 
 1. Python <= 3.11
-2. Dependencies: Managed via [pyproject.toml](https://github.com/iplot-viz/iplotlogging/blob/develop/README.md)
+2. Dependencies: Managed via [pyproject.toml](https://github.com/iplot-viz/iplotlogging/blob/IDV-732-add-pyqtgraph-as-backend-to-iplotlib/pyproject.toml)
 
 ## Installation
 
