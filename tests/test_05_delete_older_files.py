@@ -31,6 +31,7 @@ def _silent_logger() -> logging.Logger:
     logger = logging.getLogger("iplotlogging-test-delete")
     logger.handlers.clear()
     logger.addHandler(logging.NullHandler())
+    logger.propagate = False
     return logger
 
 
@@ -109,10 +110,12 @@ class DeleteOlderLogsTest(unittest.TestCase):
         for i in range(7):
             _touch(logs_dir / f"old_{i}.log", days_old=30)
 
+        # IPLOT_LOG_LIMIT is captured at module import (setupLogger.py:11),
+        # so patching the env var has no effect — patch the module global directly.
+        import iplotLogging.setupLogger as setup_logger
         with unittest.mock.patch.dict(
-                "os.environ",
-                {"IPLOT_LOG_PATH": str(self.tmp), "IPLOT_LOG_LIMIT": "1"},
-                clear=False):
+                "os.environ", {"IPLOT_LOG_PATH": str(self.tmp)}, clear=False), \
+             unittest.mock.patch.object(setup_logger, "IPLOT_LOG_LIMIT", "1"):
             delete_older_logs(self.logger)
 
         self.assertEqual(len(list(logs_dir.iterdir())), 5,
@@ -130,16 +133,11 @@ class DeleteOlderDumpsTest(unittest.TestCase):
         for i in range(7):
             _touch(dumps_dir / f"dump_{i}.scsv", days_old=30)
 
+        import iplotLogging.setupLogger as setup_logger
         with unittest.mock.patch.dict(
-                "os.environ",
-                {"IPLOT_DUMP_PATH": str(self.tmp), "IPLOT_LOG_LIMIT": "1"},
-                clear=False):
-            # IPLOT_LOG_LIMIT is captured at module import; reload to pick
-            # up the patched value.
-            import importlib
-            import iplotLogging.setupLogger as setup_logger
-            importlib.reload(setup_logger)
-            setup_logger.delete_older_dumps(self.logger)
+                "os.environ", {"IPLOT_DUMP_PATH": str(self.tmp)}, clear=False), \
+             unittest.mock.patch.object(setup_logger, "IPLOT_LOG_LIMIT", "1"):
+            delete_older_dumps(self.logger)
 
         self.assertEqual(len(list(dumps_dir.iterdir())), 5)
 
