@@ -52,3 +52,10 @@ cython_debug/
 
 # Ide
 .vscode/
+
+# Coverage artifacts
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.pytest_cache/
