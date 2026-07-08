@@ -98,6 +98,20 @@ class DeleteOlderFilesTest(unittest.TestCase):
             # Must not raise.
             delete_older_files(self.logger, str(self.tmp), days=1)
 
+    def test_vanished_file_during_cleanup_is_swallowed(self):
+        """A second MINT instance can delete a log between our listing and
+        our stat of it; the helper must skip the vanished file, not crash."""
+        for i in range(7):
+            _touch(self.tmp / f"file_{i}.log", days_old=30)
+
+        with unittest.mock.patch("os.path.getmtime",
+                                 side_effect=FileNotFoundError("vanished")):
+            # Every stat now fails; the call must still return cleanly.
+            delete_older_files(self.logger, str(self.tmp), days=1)
+
+        self.assertEqual(len(list(self.tmp.iterdir())), 7,
+                         "nothing can be removed if it can't even be stat'd")
+
 
 class DeleteOlderLogsTest(unittest.TestCase):
     def setUp(self):
