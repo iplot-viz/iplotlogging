@@ -107,12 +107,24 @@ def delete_older_files(logger, path, days):
     else:
         files = []
 
-    files.sort(key=lambda x: os.path.getmtime(os.path.join(path, x)))
+    def _safe_mtime(name):
+        # A concurrently-running MINT instance may delete a log between the
+        # listing above and this stat; treat a vanished file as oldest.
+        try:
+            return os.path.getmtime(os.path.join(path, name))
+        except OSError:
+            return 0.0
+
+    files.sort(key=_safe_mtime)
 
     for file in files[:-5]:
         full_path = os.path.join(path, file)
 
-        file_date = datetime.datetime.fromtimestamp(os.path.getmtime(full_path))
+        try:
+            file_date = datetime.datetime.fromtimestamp(os.path.getmtime(full_path))
+        except OSError:
+            # Already removed by another instance; nothing left to delete.
+            continue
 
         days_diff = (actual_date - file_date).days
 
